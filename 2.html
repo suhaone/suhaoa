@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/2.css"/>
+	</head>
+	<body>
+		
+		<div class="lin">
+			新闻名;<input type="text" id="user" /><br />
+			作 者：<input type="text" id="bookname" /><br />
+			<!--类 型：<input type="text" id="titlename" /><br />-->
+			内 容：<textarea id="txt">1151</textarea><br />
+			<button id="btn4">点我啊</button>
+			<div class="a">
+				<a href="http://localhost:8000/list/list?user=新闻">查看新闻</a>
+			</div>
+		</div>
+		
+		
+	</body>
+	<script type="text/javascript">
+			btn4.onclick = function(){
+				ajax({
+					url: 'http://localhost:8000/list/tian',
+					type: 'post',
+					data: {
+						user: user.value,
+						bookname: bookname.value,
+//						titlename:titlename.value,
+						txt:txt.value
+					},
+					success: function(da) {
+						console.log(da)
+					},
+					error: function() {}
+				})
+			}
+			
+			function ajax(req) {
+				var ajax = new XMLHttpRequest()
+				if(req.type == 'get') {
+					ajax.open('get', req.url + '?' + strdata(req.data), true)
+					ajax.send()
+				} else {
+					ajax.open('post', req.url, true)
+					ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+					ajax.send(strdata(req.data))
+				}
+				ajax.onreadystatechange = function() {
+					if(ajax.readyState == 4) {
+						if(ajax.status >= 200 && ajax.status < 300 || ajax.status == 304) {
+							req.success(ajax.responseText)
+						} else {
+							req.error(ajax.status)
+						}
+		
+					}
+				}
+				function strdata(da) {
+					var arr = []
+					for(var i in da) {
+						arr.push(i + '=' + da[i])
+					}
+					var strurl = arr.join('&')
+					return strurl
+				}
+			}
+			
+			
+			
+			function deletes(a){
+				alert(a)
+			ajax({
+				type: "get",
+				url: "http://localhost:8000/list/delete",
+				data:{
+					uid:a
+				},
+				success: function(da) {
+					console.log(da)
+					over()
+				},
+				error: function(da) {
+					console.log(da)
+				}
+			})
+		}
+		</script>
+	
+	
+	
+</html>

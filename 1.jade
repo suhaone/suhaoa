@@ -1,0 +1,25 @@
+doctype
+html
+	head
+		meta(charset="utf-8")
+		title=titles
+		style.
+			a{
+				text-decoration: none;
+				color:black;
+				font-family: "微软雅黑";
+				margin-top:10px;
+			}
+			li{
+				list-style: none;
+				border-bottom: solid 1px pink;
+			}
+			h1{
+				color: pink;
+			}
+	body
+		h1=titles
+		ul
+			-for(var i=0;i<arr.length;i++)
+				a(href="http://localhost:8000/list/text?uid="+arr[i].uid)
+					li=arr[i].name

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/css.css"/>
+	</head>
+
+	<body>
+	<div class="jq22-container" style="padding-top:20px">
+    <div class="login-wrap">
+        <div class="login-html">
+        <div id="box" style="width: 150px; height: 150px; background-color:pink ;"></div>
+            <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">登录</label>
+            <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">注册</label>
+
+            <div class="login-form">
+
+            user： <input type="text" id="user1" /><br>
+		    pass： <input type="pass" id="pass1" /><br>
+		<button id="btn1">登录</button>   
+        <div class="sign-up-htm" style="height: 200px; background-color: white">
+
+
+                       头像：  <input type="file" id="img" /><br> 
+		 user：  <input type="text" id="user" /><br> 
+		 pass：  <input type="pass" id="pass" /><br>
+		 <button id="btn">注册</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+	</body>
+	<script>
+		var urlimg = ''
+		img.onchange = function() {
+			var f = this.files[0]
+			var d = new FormData
+			console.log(f)
+			d.append('img', f)
+			ajax({
+				type: "post",
+				url: "http://localhost:8000/list/images",
+				data: d,
+				success: function(da) {
+					urlimg = da
+					console.log(da)
+				},
+				error: function(da) {
+					console.log(da)
+				}
+			})
+		}
+		var zeng = /^[A-Za-z0-9]+$/
+		btn.onclick = function() {
+			if(user.value == '') {
+				alert('用户名不能为空')
+			} else if(pass.value == '') {
+				alert('密码不能为空')
+			} else if(urlimg == '') {
+				alert('图片不能为空')
+			} else {
+				if(pass.value.length < 6 || pass.value.length > 18) {
+					alert('密码为6-18')
+				} else if(user.value.length < 6 || user.value.length > 18) {
+					alert('用户名为6-18')
+				} else {
+					if(!zeng.test(user.value)) {
+						alert('用户名为字母或数字')
+					} else if(!zeng.test(pass.value)) {
+						alert('密码为字母或数字')
+					} else {
+						ajax1({
+							type: "post",
+							url: "http://localhost:8000/list/loginup",
+							data: {
+								user: user.value,
+								pass: pass.value,
+								img: urlimg
+							},
+							success: function(da) {
+								console.log(da)
+							},
+							error: function(da) {
+								console.log(da)
+							}
+						})
+					}
+				}
+			}
+
+		}
+
+		btn1.onclick = function() {
+			if(user1.value == ""){
+				alert("请输入账号")
+			}else if(pass1.value == ""){
+				alert("请输入密码")
+			}else{
+				ajax1({
+					type: "post",
+					url: "http://localhost:8000/list/loginin",
+					data: {
+						user: user1.value,
+						pass: pass1.value
+					},
+					success: function(da) {
+						console.log(da)
+						box.innerHTML = `
+					    	<img src="http://localhost:8000${da}"/> 
+					 	`
+					 	window.location = "/2.html"
+					},
+					error: function(da) {
+						console.log(da)
+					}
+				})
+			}
+			
+		}
+
+		function ajax(text) {
+
+			var xhr = new XMLHttpRequest()
+
+			//这里是post
+			xhr.open('post', text.url, true)
+			xhr.send(text.data)
+
+			xhr.onreadystatechange = function() {
+				if(xhr.readyState == 4) {
+					if(xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+						text.success(xhr.responseText)
+					} else {
+						text.error(xhr.status)
+					}
+				}
+			}
+		}
+
+		function ajax1(text) {
+
+			var xhr = new XMLHttpRequest()
+			if(text.type == "get") {
+				//这里是get
+				xhr.open('get', text.url + '?' + strUrl(text.data), true)
+				xhr.send()
+			} else {
+				//这里是post
+				xhr.open('post', text.url, true)
+				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+				xhr.send(strUrl(text.data))
+			}
+			xhr.onreadystatechange = function() {
+				if(xhr.readyState == 4) {
+					if(xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+						text.success(xhr.responseText)
+					} else {
+						text.error(xhr.status)
+					}
+				}
+			}
+
+			function strUrl(json) {
+				var arr = []
+				for(i in json) {
+					arr.push(i + '=' + json[i])
+				}
+				var str = arr.join('&')
+				return str
+
+			}
+		}
+	</script>
+
+</html>
